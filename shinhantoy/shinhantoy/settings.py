@@ -37,9 +37,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'order.apps.OrderConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -121,3 +125,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SILENCED_SYSTEM_CHECKS = ['urls.W002'] # '/'와 관련된 warnning message를 처리해주는 코드
+
+REST_FRAMEWORK = { # rest_framework 기본 설정값
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 10,
+    # "DEFAULT_AUTHENTICATION_CLASSES": ( # JWT 인증 정보
+    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
+    # )
+}
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
