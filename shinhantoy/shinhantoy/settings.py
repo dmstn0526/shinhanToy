@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'order.apps.OrderConfig',
+    'member.apps.MemberConfig',
 ]
 
 MIDDLEWARE = [
@@ -131,9 +132,27 @@ SILENCED_SYSTEM_CHECKS = ['urls.W002'] # '/'와 관련된 warnning message를 �
 REST_FRAMEWORK = { # rest_framework 기본 설정값
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
-    # "DEFAULT_AUTHENTICATION_CLASSES": ( # JWT 인증 정보
-    #     "rest_framework_simplejwt.authentication.JWTAuthentication",
-    # )
+    "DEFAULT_AUTHENTICATION_CLASSES": ( # JWT 인증 정보
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    )
 }
+
+# 인증 관련
+import datetime
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME" : datetime.timedelta(hours=2), # 내가 로그인 됐는지 안됐는지 확인
+    # 2시간이 지나면 REFRESH TOKEN으로 갱신
+    "REFRESH_TOKEN_LIFETIME" : datetime.timedelta(days=1), # 하루 내에 갱신 요청을 하면 갱신 해줌
+    "AUTH_HEADER_TYPES": ("JWT", ), # 인증할 때 header에 token앞에 붙일 키워드를 설정
+}
+AUTH_USER_MODEL = "member.Member"
+AUTHENTICATION_BACKENDS = [ # 백엔드를 새로 설정 = 인증 과정을 새로 등록
+    "member.auth.MemberAuth" # 장고가 인증을 시도
+]
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
