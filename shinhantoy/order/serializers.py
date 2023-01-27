@@ -29,7 +29,11 @@ class CommentCreateSerializer(serializers.ModelSerializer):
         default = serializers.CurrentUserDefault(),
         required = False
     )
-    
+    def validate_member(self, value):
+        if not value.is_authenticated:
+            raise serializers.ValidationError('member is required')
+        return value
+
     class Meta:
         model = Comment
         fields = '__all__'

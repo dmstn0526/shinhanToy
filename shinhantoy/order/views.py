@@ -33,6 +33,8 @@ class OrderDetailView(
 
 class CommentListView(
     mixins.ListModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
     generics.GenericAPIView
 ):
     serializer_class = CommentSerializer
@@ -45,6 +47,30 @@ class CommentListView(
 
     def get(self, request, *args, **kwargs):
         return self.list(request, args, kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, args, kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, args, kwargs)
+
+class CommentDetailView(
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+):
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+        if self.request.method == 'DELETE':
+            return Comment.objects.filter(member_id=self.request.user.id).order_by('-id')
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, args, kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, args, kwargs)
+
 
 class CommentCreateView(
     mixins.CreateModelMixin,
