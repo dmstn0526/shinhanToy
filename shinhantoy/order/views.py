@@ -1,6 +1,6 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
+# from rest_framework.views import APIView
+# from rest_framework.response import Response
+# from rest_framework import status
 from rest_framework import mixins
 from rest_framework import generics
 
@@ -20,23 +20,15 @@ class OrderListView(mixins.ListModelMixin, generics.GenericAPIView):
 
 class OrderDetailView(
     mixins.RetrieveModelMixin,
-    mixins.DestroyModelMixin,
-    mixins.UpdateModelMixin,
     generics.GenericAPIView
 ):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        return Order.objects.all().order_by('id')
+        return Order.objects.all().order_by('-id')
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, args, kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        return self.destroy(request, args, kwargs)
-
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, args, kwargs)
 
 class CommentListView(
     mixins.ListModelMixin,
@@ -47,9 +39,7 @@ class CommentListView(
     def get_queryset(self):
         order_id = self.kwargs.get('order_id')
         if order_id:
-            return Comment.objects.filter(order_id=order_id) \
-                .select_related('member','order') \
-                .order_by('-id')
+            return Comment.objects.filter(order_id=order_id).order_by('-id')
         return Comment.objects.none()
 
     def get(self, request, *args, **kwargs):
@@ -60,9 +50,6 @@ class CommentCreateView(
     generics.GenericAPIView,
 ):
     serializer_class = CommentCreateSerializer
-
-    def get_queryset(self):
-        return Comment.objects.all()
 
     def post(self, request, *args, **kwargs):
         return self.create(request, args, kwargs)

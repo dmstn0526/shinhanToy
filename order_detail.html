@@ -13,16 +13,25 @@
                 if (order_id > 0){
                     $.get("http://127.0.0.1:8000/api/order/"+order_id)
                         .then((result) => {
-                            $("#ord_ymd").text(result.ord_ymd);
-                            $("#acct_mang_dbrn_code").text(result.acct_mang_dbrn_code);
-                            $("#ord_no").text(result.ord_no);
-                            $("#acct_no").text(result.acct_no);
-                            $("#callv_type_code").text(result.callv_type_code);
-                            $("#sell_buy_tp_code").text(result.sell_buy_tp_code);
-                            $("#stbd_code").text(result.stbd_code);
-                            $("#ord_qty").text(result.ord_qty);
-                            $("#ord_uv").text(result.ord_uv);
-                            $("#mrgn_base_uv").text(result.mrgn_base_uv);
+                            // $("#ord_ymd").text(result.ord_ymd);
+                            // $("#acct_mang_dbrn_code").text(result.acct_mang_dbrn_code);
+                            // $("#ord_no").text(result.ord_no);
+                            // $("#acct_no").text(result.acct_no);
+                            // $("#callv_type_code").text(result.callv_type_code);
+                            // $("#sell_buy_tp_code").text(result.sell_buy_tp_code);
+                            // $("#stbd_code").text(result.stbd_code);
+                            // $("#ord_qty").text(result.ord_qty);
+                            // $("#ord_uv").text(result.ord_uv);
+                            // $("#mrgn_base_uv").text(result.mrgn_base_uv);
+                            const keys = Object.keys(result);
+                            $("#info").html("");
+
+                            for (let i=0; i<keys.length; i++){
+                                let key = keys[i];
+                                $("#info").append(
+                                    $(`<li>${key}: ${result[key]}</li>`)
+                                );
+                            }
                         });
                     $.get("http://127.0.0.1:8000/api/order/"+order_id+'/comment')
                         .then((result) => {
@@ -44,6 +53,7 @@
             function commentcreate() {
                 const search = new URLSearchParams(location.search);
                 const order_id = search.get('order_id');
+
                 $.ajax({
                     type: 'POST',
                     url: 'http://127.0.0.1:8000/api/order/comment',
@@ -57,6 +67,7 @@
                     
                     success: (result) => {
                         alert("댓글이 등록되었습니다.");
+                        location.reload(); //화면을 다시 로드하는 코드
                     },
                     error: (result) => {
                         console.error(result);
@@ -67,30 +78,19 @@
     </head>
     <body>
         <div class="container">
-            <h1 id="productName" class="text-center"></h1>
-            <ul>
-                <li><span id="ord_ymd"></span></li>
-                <li><span id="acct_mang_dbrn_code"></span></li>
-                <li><span id="ord_no"></span></li>
-                <li><span id="acct_no"></span></li>
-                <li><span id="callv_type_code"></span></li>
-                <li><span id="sell_buy_tp_code"></span></li>
-                <li><span id="stbd_code"></span></li>
-                <li><span id="ord_qty"></span></li>
-                <li><span id="ord_uv"></span></li>
-                <li><span id="mrgn_base_uv"></span></li>
+            <ul id="info">
             </ul>
-            <div class="form-floating">
-                <textarea class="form-control" placeholder="Leave a comment here" id="comment" style="height: 100px"></textarea>
-                <label for="comment">Comment</label>
-            </div>
+            <hr>
+            <h5>댓글 쓰기</h5>
             <div class="form-group mb-3">
                 <label for="token">token</label>
                 <input type="text" class="form-control" id="token" name="token" />
             </div>
-            <div class="text-right">
-                <button type="button" class="btn btn-primary" onclick="commentcreate()">댓글 등록</button>
+            <div class="mb-3">
+                <label for="comment" class="form-label">Comment</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
             </div>
+            <button type="button" class="btn btn-primary" onclick="commentcreate()">댓글 등록</button>
             <hr>
             <ul class="list-group list-group-flush" id="comments">
                 <li class="list-group-item">댓글 내용입니다.<br><br> 박은수 (2023.01.25 14:21:05 ) </li>
